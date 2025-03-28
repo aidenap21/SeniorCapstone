@@ -15,7 +15,7 @@ import os
 import re
 import sys
 import shutil
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 
 app = Flask(__name__)
 # csv_file = "detection_results.csv"
@@ -47,7 +47,7 @@ def get_python_path():
 
 venv_python = get_python_path()# os.path.join(".venv", "Scripts", "python.exe")  # Adjust based on OS, for mine I have it as windows
 
-script_path = "app/app_code/test_script.py"
+script_path = "app/app_code/main.py"
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -101,6 +101,10 @@ def complete():
         subprocess.run(["python", "models/main_captioner.py"], check=True)
         return "Captioning process started."
     return render_template('complete.html')
+
+@app.route('/api/data', methods=['GET'])
+def get_data():
+    return jsonify({"message": "Hello from Flask!", "status": "success"})
 
 if __name__ == '__main__':
     #load_dataframe()

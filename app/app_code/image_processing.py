@@ -8,13 +8,16 @@ from io import BytesIO
 from PIL import Image
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
+import google.generativeai as genai
+import time
+from gemini import *
 from compile_to_csv import compile_to_csv  # Import the correct function
 
 class ImageProcessor:
     def __init__(self, image_loc, URL=False):
         self.loc = image_loc # saves path or url for CSV writing later
-
-        if True: #URL: # runs if location passed in is a URL
+        
+        if URL: #URL: # runs if location passed in is a URL
             try:
                 response = requests.get(image_loc)
                 self.image = Image.open(BytesIO(response.content))
@@ -22,12 +25,23 @@ class ImageProcessor:
                 self.image = None
                 print(f"ERROR LOADING IMAGE {self.loc}")
                 return
+            
 
         else: # runs if a direct file path is given
             self.image = Image.open(image_loc) #.convert("RGB")
 
         self.image = self.image.convert("RGB")
         logging.set_verbosity_error()
+
+    def generate_caption_with_gemini(self):
+        model = genai.GenerativeModel("gemini-1.5-flash")
+        API_KEY = retrieveKey()
+        genai.configure(api_key=API_KEY)
+        time.sleep(1)
+        try:
+            return model.generate_content([self.image,"Describe this image in a detailed caption. "]).text
+        except:
+            return ""
 
     def generate_caption_with_blip(self):
         # Initialize the BLIP processor and model
@@ -57,7 +71,7 @@ class ImageProcessor:
         try:
             inputs = processor(images=self.image, return_tensors="pt").to(device)
         except:
-            print(f"FAIELD TO PROCESS {self.loc}")
+            print(f"FAILED TO PROCESS {self.loc}")
             return {}
 
         # Perform inference
