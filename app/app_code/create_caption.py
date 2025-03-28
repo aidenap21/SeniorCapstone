@@ -24,7 +24,7 @@ def mergeTags(entities):  # Function to merge tags
     return entities  # Returns the entire entities dictionary
 
 
-def create_caption(image_path, text, URL=False):
+def create_caption(image_path, text, URL=False, training=True):
     URL = image_path.startswith("http") or image_path.startswith("https")
     image_processor = ImageProcessor(image_path, URL=URL)  # Instantiate an Image Processor Class
 
@@ -68,7 +68,10 @@ def create_caption(image_path, text, URL=False):
     #     tags += cur_string
 
     print(f"Caption: {caption}\nTags: {tags}")
-    return generate_sentence(caption, tags)  # Pass the created caption and extracted tags to our alt-text generator
+    if training:
+        return train_generate_sentence(caption, tags, image_path)
+    else:
+        return generate_sentence(caption, tags)  # Pass the created caption and extracted tags to our alt-text generator
 
 if __name__ == "__main__":
     # image_path = "images/basketball.jpg"

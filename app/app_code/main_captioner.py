@@ -41,7 +41,7 @@ def caption_site(url, output_name='site', pool=1):
             for image, text in site_data:
                 writer.writerow([
                     image,
-                    create_caption(image, text, URL=True)
+                    create_caption(image, text, URL=True, training=True)
                 ])
 
     # Multiprocessing
