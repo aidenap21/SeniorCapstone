@@ -56,7 +56,7 @@ def create_caption(image_path, text, URL=False, training=True):
     for person in entities["Organizations"]: # Add all organizations
         tags += f"{person}, "
     '''
-    return geminiGenerate(caption,text,tags)
+    return geminiGenerate(caption,text,tags, image_path, training)
 
 if __name__ == "__main__":
     # image_path = "images/basketball.jpg"
